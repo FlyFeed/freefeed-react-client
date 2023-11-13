@@ -125,7 +125,7 @@ export default {
   },
 
   analytics: {
-    google: 'G-7SVCPRV62H',
+    google: '',
     ga4: 'G-7SVCPRV62H',
   },
 
