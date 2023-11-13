@@ -65,7 +65,7 @@ export default {
         showTimestamps: false,
         hideRepliesToBanned: false,
       },
-      allowLinksPreview: true,
+      allowLinksPreview: false,
       readMoreStyle: 'modern',
       homeFeedSort: ACTIVITY,
       homeFeedMode: HOMEFEED_MODE_CLASSIC,
