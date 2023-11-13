@@ -125,7 +125,8 @@ export default {
   },
 
   analytics: {
-    google: null,
+    google: 'G-7SVCPRV62H',
+    ga4: 'G-7SVCPRV62H',
   },
 
   betaChannel: {
