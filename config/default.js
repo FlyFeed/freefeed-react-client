@@ -1,4 +1,4 @@
-import { DISPLAYNAMES_BOTH } from '../src/utils/frontend-preferences-options';
+import { DISPLAYNAMES_DISPLAYNAME } from '../src/utils/frontend-preferences-options';
 import { ACTIVITY, HOMEFEED_MODE_CLASSIC } from '../src/utils/feed-options';
 import { TLDs } from './lib/tlds';
 
@@ -6,20 +6,20 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 export default {
   api: {
-    root: 'https://candy.freefeed.net',
+    root: 'https://freefeed.net',
   },
 
-  siteTitle: 'FreeFeed',
+  siteTitle: 'FlyFeed',
 
-  siteOrigin: 'http://localhost:3333',
+  siteOrigin: 'https://freefeed.net',
 
   auth: {
     tokenPrefix: 'freefeed_',
-    userStorageKey: 'USER_KEY',
+    userStorageKey: 'whoamiCache',
   },
 
   captcha: {
-    siteKey: '',
+    siteKey: '6LdChhITAAAAAGzgvUPPCbg0cxJzcxFc5vlBs9u5',
   },
 
   search: {
@@ -30,6 +30,7 @@ export default {
     // for transform links in the posts, comments, etc.
     'freefeed.net',
     'gamma.freefeed.net',
+    'flyfeed.net',
   ],
 
   textFormatter: {
@@ -46,25 +47,25 @@ export default {
   },
 
   sentry: {
-    publicDSN: null,
+    publicDSN: 'https://abdac1f2db2d45efaa9142062fe14bd8@sentry.io/75960',
   },
 
   frontendPreferences: {
-    clientId: 'net.freefeed',
+    clientId: 'net.flyfeed',
     // Use only plain JSON types here. Do not use null values (for type checking).
     defaultValues: {
       displayNames: {
-        displayOption: DISPLAYNAMES_BOTH,
+        displayOption: DISPLAYNAMES_DISPLAYNAME,
         useYou: true,
       },
-      realtimeActive: false,
+      realtimeActive: true,
       comments: {
         omitRepeatedBubbles: true,
         highlightComments: true,
         showTimestamps: false,
         hideRepliesToBanned: false,
       },
-      allowLinksPreview: false,
+      allowLinksPreview: true,
       readMoreStyle: 'modern',
       homeFeedSort: ACTIVITY,
       homeFeedMode: HOMEFEED_MODE_CLASSIC,
@@ -112,14 +113,15 @@ export default {
   },
 
   // if false, new users are public by default
-  newUsersProtected: false,
+  newUsersProtected: true,
 
   registrationsLimit: {
     emailFormIframeSrc: null,
   },
 
   registrationsByInvite: {
-    formIframeSrc: null,
+    formIframeSrc:
+      'https://docs.google.com/forms/d/e/1FAIpQLSdBzsUIHzR57Ylt2AfUfbIf9Bc03I8Oq2SdQmYqp0s-OsWmnw/viewform',
   },
 
   analytics: {
