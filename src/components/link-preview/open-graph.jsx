@@ -9,7 +9,9 @@ export default function OpenGraphPreview({ url }) {
     }
     async function fetchData() {
       try {
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+        const response = await fetch(
+          `https://corsproxy.io/?${encodeURIComponent(addTrailingSlash(url))}`,
+        );
         const html = await response.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
 
@@ -42,4 +44,11 @@ export default function OpenGraphPreview({ url }) {
       </div>
     </div>
   );
+}
+
+function addTrailingSlash(url) {
+  if (!url.endsWith('/')) {
+    return `${url}/`;
+  }
+  return url;
 }
