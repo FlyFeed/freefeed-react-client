@@ -788,8 +788,8 @@ $post-line-height: rem(20px);
   }
 
   .opengraph-image {
-    max-width: 428px;
-    min-width: 428px;
+    max-width: 100%;
+    min-width: 100%;
     max-height: 300px;
     object-fit: cover;
     object-position: top;
