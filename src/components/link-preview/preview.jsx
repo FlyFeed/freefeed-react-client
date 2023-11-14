@@ -41,13 +41,13 @@ export default function LinkPreview({ allowEmbedly, url }) {
     return <SpotifyPreview url={url} />;
   } else if (appleMusicCanShowURL(url)) {
     return <AppleMusicPreview url={url} />;
+  } else if (OpenGraphPreview({ url })) {
+    return <OpenGraphPreview url={url} />;
   }
-
   if (allowEmbedly) {
     return <EmbedlyPreview url={url} />;
   }
-
-  return <OpenGraphPreview url={url} />;
+  return false;
 }
 
 LinkPreview.propTypes = {

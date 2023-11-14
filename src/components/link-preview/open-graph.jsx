@@ -5,30 +5,33 @@ export default function OpenGraphPreview({ url }) {
 
   useEffect(() => {
     if (url.startsWith(window.location.origin)) {
-      return;
+      return false;
     }
     async function fetchData() {
-      const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
-      const html = await response.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
+      try {
+        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
 
-      const metaContent = (property) =>
-        doc.querySelector(`meta[property="${property}"]`)?.getAttribute('content');
+        const metaContent = (property) =>
+          doc.querySelector(`meta[property="${property}"]`)?.getAttribute('content');
 
-      const [title, description, image, source] = [
-        'og:title',
-        'og:description',
-        'og:image',
-        'og:site_name',
-      ].map(metaContent);
-      setData({ title, description, image, source });
+        const [title, description, image, source] = [
+          'og:title',
+          'og:description',
+          'og:image',
+          'og:site_name',
+        ].map(metaContent);
+        setData({ title, description, image, source });
+      } catch {
+        return false;
+      }
     }
     fetchData();
   }, [url]);
   if (!data || data.title === undefined) {
-    return null;
+    return false;
   }
-
   return (
     <div className="opengraph-preview">
       {data.image && <img className="opengraph-image" src={data.image} alt={data.title} />}
