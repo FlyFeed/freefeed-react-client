@@ -118,8 +118,8 @@ export function CommentEditForm({
             !canSubmit
               ? 'Submit disabled (textarea is empty)'
               : submitStatus.loading
-              ? 'Submitting comment'
-              : null
+                ? 'Submitting comment'
+                : null
           }
           onClick={doSubmit}
         >

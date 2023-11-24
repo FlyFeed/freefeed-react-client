@@ -79,13 +79,13 @@ export function PostEditForm({ id, isDirect, recipients, createdBy, body, attach
       const pp = postPrivacy.isPrivate
         ? 'private'
         : postPrivacy.isProtected
-        ? 'protected'
-        : 'public';
+          ? 'protected'
+          : 'public';
       const dp = destPrivacy.isPrivate
         ? 'private'
         : destPrivacy.isProtected
-        ? 'protected'
-        : 'public';
+          ? 'protected'
+          : 'public';
       setPrivacyWarning(`This action will make this ${pp} post ${dp}.`);
     } else {
       setPrivacyWarning(null);
@@ -138,12 +138,12 @@ export function PostEditForm({ id, isDirect, recipients, createdBy, body, attach
       privacyLevel === 'private'
         ? 'Update private post'
         : privacyLevel === 'protected'
-        ? 'Update protected post'
-        : privacyLevel === 'public'
-        ? 'Update public post'
-        : privacyLevel === 'direct'
-        ? 'Update direct message'
-        : null,
+          ? 'Update protected post'
+          : privacyLevel === 'public'
+            ? 'Update public post'
+            : privacyLevel === 'direct'
+              ? 'Update direct message'
+              : null,
     [privacyLevel],
   );
 
