@@ -11,6 +11,7 @@ import TikTokPreview, { canShowURL as tikTokCanShowURL } from './tiktok';
 import SoundCloudPreview, { canShowURL as soundCloudCanShowURL } from './soundcloud';
 import SpotifyPreview, { canShowURL as spotifyCanShowURL } from './spotify';
 import AppleMusicPreview, { canShowUrl as appleMusicCanShowURL } from './apple-music';
+import OpenGraphPreview from './open-graph';
 
 import EmbedlyPreview from './embedly';
 
@@ -40,12 +41,12 @@ export default function LinkPreview({ allowEmbedly, url }) {
     return <SpotifyPreview url={url} />;
   } else if (appleMusicCanShowURL(url)) {
     return <AppleMusicPreview url={url} />;
+  } else if (OpenGraphPreview({ url })) {
+    return <OpenGraphPreview url={url} />;
   }
-
   if (allowEmbedly) {
     return <EmbedlyPreview url={url} />;
   }
-
   return false;
 }
 

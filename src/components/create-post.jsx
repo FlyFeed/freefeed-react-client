@@ -7,7 +7,10 @@ import {
 import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cn from 'classnames';
+import GifPicker from 'gif-picker-react';
+import { tenorApiKey } from '../utils/tenor-api-key';
 import { createPost, resetPostCreateForm } from '../redux/action-creators';
+import { faGif } from './fontawesome-custom-icons';
 import { ButtonLink } from './button-link';
 import ErrorBoundary from './error-boundary';
 import { Icon } from './fontawesome-icons';
@@ -26,11 +29,12 @@ import { Selector } from './feeds-selector/selector';
 import { CREATE_DIRECT, CREATE_REGULAR } from './feeds-selector/constants';
 import { CommaAndSeparated } from './separated';
 import { usePrivacyCheck } from './feeds-selector/privacy-check';
+import { OverlayPopup } from './overlay-popup';
 
 const selectMaxFilesCount = (serverInfo) => serverInfo.attachments.maxCountPerPost;
 const selectMaxPostLength = (serverInfo) => serverInfo.maxTextLength.post;
 
-export default function CreatePost({ sendTo, isDirects }) {
+export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
   const dispatch = useDispatch();
   const createPostStatus = useSelector((state) => state.createPostStatus);
 
@@ -43,6 +47,7 @@ export default function CreatePost({ sendTo, isDirects }) {
   const [commentsDisabled, toggleCommentsDisabled] = useBool(false);
   const [isMoreOpen, toggleIsMoreOpen] = useBool(false);
   const [postText, setPostText] = useState(sendTo.invitation || '');
+  const [gifActive, setgifActive] = useState(false);
 
   const defaultFeedNames = useMemo(() => {
     if (Array.isArray(sendTo.defaultFeed)) {
@@ -101,8 +106,9 @@ export default function CreatePost({ sendTo, isDirects }) {
     (e) => {
       e?.preventDefault?.();
       canSubmitForm && dispatch(createPost(feeds, postText, fileIds, { commentsDisabled }));
+      hideNewPostDialog && hideNewPostDialog(false);
     },
-    [fileIds, canSubmitForm, commentsDisabled, dispatch, feeds, postText],
+    [fileIds, canSubmitForm, commentsDisabled, dispatch, feeds, postText, hideNewPostDialog],
   );
 
   const handleCommentsDisable = useCallback(
@@ -134,6 +140,12 @@ export default function CreatePost({ sendTo, isDirects }) {
   }, []);
 
   const [privacyLevel, privacyProblems] = usePrivacyCheck(feeds);
+
+  const setGif = (gif) => {
+    textareaRef.current?.focus();
+    setPostText(`${postText} ${gif}`);
+    setgifActive(false);
+  };
 
   const privacyIcon = useMemo(
     () =>
@@ -221,7 +233,37 @@ export default function CreatePost({ sendTo, isDirects }) {
             >
               <Icon icon={faPaperclip} className="upload-icon" /> Add photos or files
             </ButtonLink>
-
+            {' | '}
+            <ButtonLink
+              className="post-edit-attachments"
+              role="button"
+              /* eslint-disable-next-line react/jsx-no-bind */
+              onClick={() => {
+                setgifActive(!gifActive);
+              }}
+            >
+              <Icon icon={faGif} className="upload-icon" />
+            </ButtonLink>
+            {gifActive && (
+              <>
+                <OverlayPopup
+                  /* eslint-disable-next-line react/jsx-no-bind */
+                  close={() => {
+                    setgifActive(false);
+                    textareaRef.current?.focus();
+                  }}
+                >
+                  <GifPicker
+                    /* eslint-disable-next-line react/jsx-no-bind */
+                    onGifClick={(gif) => setGif(gif.url)}
+                    theme={
+                      localStorage.getItem(window.CONFIG.appearance.colorSchemeStorageKey) || 'auto'
+                    }
+                    tenorApiKey={tenorApiKey}
+                  />
+                </OverlayPopup>
+              </>
+            )}
             <ButtonLink className="post-edit-more-trigger" onClick={toggleIsMoreOpen}>
               <MoreWithTriangle />
             </ButtonLink>
