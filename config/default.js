@@ -30,7 +30,8 @@ export default {
     // for transform links in the posts, comments, etc.
     'freefeed.net',
     'gamma.freefeed.net',
-    'flyfeed.net',
+    'freefeed.me',
+    'freefeed.eu.org',
   ],
 
   textFormatter: {
@@ -51,7 +52,7 @@ export default {
   },
 
   frontendPreferences: {
-    clientId: 'net.flyfeed',
+    clientId: 'org.eu.freefeed',
     // Use only plain JSON types here. Do not use null values (for type checking).
     defaultValues: {
       displayNames: {
