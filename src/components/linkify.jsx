@@ -9,6 +9,7 @@ import ErrorBoundary from './error-boundary';
 import { tokenToElement } from './linkify-elements';
 import Spoiler from './spoiler';
 import UserName from './user-name';
+import { canShowURL as isInstagram } from './link-preview/instagram';
 
 export default function Linkify({
   children,
@@ -78,6 +79,9 @@ function parseString(text, params) {
   let result = resultContent;
 
   for (const [index, token] of tokens.entries()) {
+    if (token.text === '==' && isInstagram(tokens[index - 1].text)) {
+      continue;
+    }
     if (token.type === SPOILER_START) {
       result.push(tokenToElement(token, index, params));
       result = spoilerContent;
