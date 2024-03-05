@@ -36,15 +36,24 @@ export default {
 
   textFormatter: {
     tldList: TLDs,
-    /**
-     * The format is:
-     * [
-     *  { title: "Telegram", linkTpl: "https://t.me/{}", shortCodes: ["tg", "telegram"] },
-     *  { title: "Twitter", linkTpl: "https://twitter.com/{}", shortCodes: ["tw", "twitter"] },
-     *  ...
-     * ]
-     */
-    foreignMentionServices: [],
+    foreignMentionServices: [
+      { title: 'Facebook', linkTpl: 'https://www.facebook.com/{}', shortCodes: ['fb', 'facebook'] },
+      { title: 'FreeFeed', linkTpl: 'https://freefeed.net/{}', shortCodes: ['freefeed'] },
+      { title: 'GitHub', linkTpl: 'https://github.com/{}', shortCodes: ['github'] },
+      {
+        title: 'Instagram',
+        linkTpl: 'https://www.instagram.com/{}/',
+        shortCodes: ['ig', 'instagram'],
+      },
+      {
+        title: 'LiveJournal',
+        linkTpl: 'https://users.livejournal.com/{}/',
+        shortCodes: ['lj', 'livejournal'],
+      },
+      { title: 'Mokum', linkTpl: 'https://mokum.place/{}', shortCodes: ['mokum'] },
+      { title: 'Telegram', linkTpl: 'https://t.me/{}', shortCodes: ['tg', 'telegram'] },
+      { title: 'Twitter', linkTpl: 'https://twitter.com/{}', shortCodes: ['twitter'] },
+    ],
   },
 
   sentry: {
@@ -150,10 +159,7 @@ export default {
   minPasswordLength: 9,
 
   appVersionCheck: {
-    // Use real URL/URI here to enable update check
-    url: '',
-    // It depends on your server configuration, which header is better to use
-    // for update checking. It may be 'Date', 'ETag', or some other header.
+    url: '/version.txt',
     header: 'Last-Modified',
     intervalSec: 300,
   },
