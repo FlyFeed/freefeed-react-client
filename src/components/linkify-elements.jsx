@@ -142,7 +142,7 @@ export function tokenToElement(token, key, params) {
 }
 
 function renderLink(token, key, params) {
-  const href = linkHref(token.text);
+  let href = linkHref(token.text);
 
   if (isLocalLink(token.text)) {
     const localPart = trimOrigin(token.text);
@@ -173,6 +173,23 @@ function renderLink(token, key, params) {
   if (params.showMedia) {
     const mediaType = getMediaType(href);
     if (mediaType) {
+      if (
+        mediaType === 'instagram' ||
+        mediaType === 'twitter' ||
+        mediaType === 'soundcloud' ||
+        mediaType === 'spotify' ||
+        mediaType === 'appleMusic' ||
+        mediaType === 'tiktok' ||
+        mediaType === 'wikipedia' ||
+        mediaType === 'telegram' ||
+        mediaType === 'googleDocs'
+      ) {
+        const url = new URL(token.text);
+        url.search = '';
+        token.text = url.toString();
+        href = url.toString();
+      }
+
       return (
         <MediaOpener
           key={key}

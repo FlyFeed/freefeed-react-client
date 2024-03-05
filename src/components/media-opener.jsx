@@ -1,7 +1,19 @@
 import { useCallback, useMemo } from 'react';
 import { faImage } from '@fortawesome/free-regular-svg-icons';
 import { faFilm as faVideo } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faYoutube, faVimeo } from '@fortawesome/free-brands-svg-icons';
+import {
+  faInstagram,
+  faYoutube,
+  faVimeo,
+  faTwitter,
+  faSoundcloud,
+  faSpotify,
+  faApple,
+  faTiktok,
+  faWikipediaW,
+  faTelegramPlane,
+  faGoogle,
+} from '@fortawesome/free-brands-svg-icons';
 import cn from 'classnames';
 import { Icon } from './fontawesome-icons';
 
@@ -29,6 +41,14 @@ export function MediaOpener({ url, mediaType, attachmentsRef, showMedia, childre
   const mediaIcon =
     {
       instagram: faInstagram,
+      twitter: faTwitter,
+      soundcloud: faSoundcloud,
+      spotify: faSpotify,
+      appleMusic: faApple,
+      tiktok: faTiktok,
+      telegram: faTelegramPlane,
+      wikipedia: faWikipediaW,
+      googleDocs: faGoogle,
       T_YOUTUBE_VIDEO: faYoutube,
       T_VIMEO_VIDEO: faVimeo,
       image: faImage,

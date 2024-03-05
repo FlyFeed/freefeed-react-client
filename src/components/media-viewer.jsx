@@ -10,6 +10,14 @@ import {
   canShowURL as isInstagram,
   getEmbedInfo as getInstagramEmbedInfo,
 } from './link-preview/instagram';
+import { canShowURL as isTwitter } from './link-preview/twitter';
+import { canShowURL as isSoundCloud } from './link-preview/soundcloud';
+import { canShowURL as isSpotify } from './link-preview/spotify';
+import { canShowUrl as isAppleMusic } from './link-preview/apple-music';
+import { canShowURL as isTiktok } from './link-preview/tiktok';
+import { canShowURL as isWikipedia } from './link-preview/wikipedia';
+import { canShowURL as isTelegram } from './link-preview/telegram';
+import { canShowURL as isGoogleDocs } from './link-preview/google-docs';
 
 const ImageAttachmentsLightbox = lazyComponent(
   () => import('./post/post-attachment-image-lightbox'),
@@ -29,6 +37,22 @@ export const getMediaType = (url) => {
       return 'image';
     } else if (isInstagram(url)) {
       return 'instagram';
+    } else if (isTwitter(url)) {
+      return 'twitter';
+    } else if (isSoundCloud(url)) {
+      return 'soundcloud';
+    } else if (isSpotify(url)) {
+      return 'spotify';
+    } else if (isAppleMusic(url)) {
+      return 'appleMusic';
+    } else if (isTiktok(url)) {
+      return 'tiktok';
+    } else if (isWikipedia(url)) {
+      return 'wikipedia';
+    } else if (isTelegram(url)) {
+      return 'telegram';
+    } else if (isGoogleDocs(url)) {
+      return 'googleDocs';
     }
     return getVideoType(url);
   } catch {
