@@ -169,38 +169,34 @@ function renderLink(token, key, params) {
     );
   }
 
-  if (params.showMedia) {
-    const mediaType = getMediaType(href);
-    if (mediaType) {
-      if (
-        mediaType === 'instagram' ||
-        mediaType === 'twitter' ||
-        mediaType === 'soundcloud' ||
-        mediaType === 'spotify' ||
-        mediaType === 'appleMusic' ||
-        mediaType === 'tiktok' ||
-        mediaType === 'wikipedia' ||
-        mediaType === 'telegram' ||
-        mediaType === 'googleDocs'
-      ) {
-        const url = new URL(token.text);
-        url.search = '';
-        token.text = url.toString();
-        href = url.toString();
-      }
-
-      return (
-        <MediaOpener
-          key={key}
-          url={href}
-          mediaType={mediaType}
-          attachmentsRef={params.attachmentsRef}
-          showMedia={params.showMedia}
-        >
-          {prettyLink(token.text, MAX_URL_LENGTH)}
-        </MediaOpener>
-      );
+  const mediaType = getMediaType(href);
+  if (mediaType) {
+    if (
+      mediaType === 'instagram' ||
+      mediaType === 'twitter' ||
+      mediaType === 'soundcloud' ||
+      mediaType === 'spotify' ||
+      mediaType === 'appleMusic' ||
+      mediaType === 'tiktok' ||
+      mediaType === 'wikipedia' ||
+      mediaType === 'telegram' ||
+      mediaType === 'googleDocs'
+    ) {
+      const url = new URL(token.text);
+      url.search = '';
+      token.text = url.toString();
+      href = url.toString();
     }
+    return (
+      <MediaOpener
+        key={key}
+        url={href}
+        mediaType={mediaType}
+        attachmentsRef={params.attachmentsRef}
+      >
+        {prettyLink(token.text, MAX_URL_LENGTH)}
+      </MediaOpener>
+    );
   }
 
   return (
