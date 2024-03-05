@@ -80,6 +80,7 @@ export default {
       },
       timeDifferenceForSpacer: DAY_IN_MILLISECONDS * 6,
       translateToLang: '', // Empty string means browser default language
+      saveDrafts: true,
     },
     defaultOverrides: {
       /**
@@ -186,5 +187,10 @@ export default {
       // Define groups like this:
       // 'public-groupname': { label: 'Makes post public', privacy: 'public' }
     },
+  },
+
+  drafts: {
+    storagePrefix: 'draft:',
+    maxDraftAge: 7 * DAY_IN_MILLISECONDS,
   },
 };

@@ -1,5 +1,5 @@
 /* global CONFIG */
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Suspense, useEffect } from 'react';
 import { Router, Route, IndexRoute, browserHistory, Redirect } from 'react-router';
 import { Provider, useSelector } from 'react-redux';
@@ -138,6 +138,7 @@ function Bookmarklet(props) {
 }
 
 initUnscroll();
+
 // Fetch server info on application start
 setTimeout(() => store.dispatch(ActionCreators.getServerInfo()), 0);
 
@@ -264,6 +265,11 @@ function App() {
           path="filter/notifications"
           component={lazyLoad(() => import('./components/notifications'))}
           {...generateRouteHooks(boundRouteActions('notifications'))}
+        />
+        <Route
+          name="drafts"
+          path="filter/drafts"
+          component={lazyLoad(() => import('./components/drafts-page'))}
         />
         <Route
           name="best_of"
@@ -414,20 +420,18 @@ const appRoot = document.querySelector('#app');
 const ga4react = new GA4React(CONFIG.analytics.ga4);
 appRoot.className = '';
 appRoot.innerHTML = '';
-
 (async () => {
   await ga4react
     .initialize()
     .then(() => console.log(`Analytics Success.`))
     .catch(() => console.log('Analytics Failure.'))
     .finally(() => {
-      ReactDOM.render(
+      createRoot(appRoot).render(
         <Provider store={store}>
           <DialogProvider>
             <App />
           </DialogProvider>
         </Provider>,
-        appRoot,
       );
     });
 })();

@@ -15,7 +15,6 @@ import ErrorBoundary from './error-boundary';
 import { ColorSchemeSetter } from './color-theme-setter';
 import { Icon, SVGSymbolDeclarations } from './fontawesome-icons';
 import { faMessage, faHouse, faPenToSquare } from './fontawesome-custom-icons';
-import MediaViewer from './media-viewer';
 import { Throbber } from './throbber';
 import { Delayed } from './lazy-component';
 import { AppUpdated } from './app-updated';
@@ -287,8 +286,6 @@ class Layout extends Component {
               {props.authenticated ? <Sidebar {...props} /> : false}
             </div>
           </LoaderContainer>
-
-          <MediaViewer />
 
           <div className="row">
             <div className="col-md-12">

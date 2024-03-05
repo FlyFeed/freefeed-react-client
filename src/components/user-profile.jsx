@@ -32,14 +32,7 @@ export default function UserProfile(props) {
         <UserProfileHead />
 
         {props.canIPostHere && (
-          <CreatePost
-            sendTo={props.sendTo}
-            user={props.user}
-            createPost={props.createPost}
-            resetPostCreateForm={props.resetPostCreateForm}
-            addAttachmentResponse={props.addAttachmentResponse}
-            showMedia={props.showMedia}
-          />
+          <CreatePost key={`profile:${props.username}`} sendTo={props.sendTo} />
         )}
 
         {props.whyCannotPost && <p className="alert alert-warning">{props.whyCannotPost}</p>}

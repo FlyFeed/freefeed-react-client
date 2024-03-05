@@ -27,6 +27,7 @@ import { Icon } from './fontawesome-icons';
 import { SideBarMemories } from './sidebar-memories';
 import { faPenToSquare } from './fontawesome-custom-icons';
 import CreatePost from './create-post';
+import { WithDraftsCount } from './post/draft-with-count';
 
 function LoggedInBlock({ user, signOut }) {
   const signOutStatus = useSelector((state) => state.signOutStatus);
@@ -105,9 +106,18 @@ const SideBarFriends = ({ user }) => {
               </Link>
             </li>
             <li className="p-calendar">
-              <Link to={`/${user.username}/calendar`} className="with-label--new">
-                Calendar
-              </Link>
+              <Link to={`/${user.username}/calendar`}>Calendar</Link>
+            </li>
+            <li className="p-drafts">
+              <WithDraftsCount>
+                {(count) =>
+                  count > 0 && (
+                    <Link to="/filter/drafts" style={{ fontWeight: 'bold' }}>
+                      Drafts ({count})
+                    </Link>
+                  )
+                }
+              </WithDraftsCount>
             </li>
           </ul>
         </div>

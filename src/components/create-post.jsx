@@ -10,6 +10,7 @@ import cn from 'classnames';
 import GifPicker from 'gif-picker-react';
 import { tenorApiKey } from '../utils/tenor-api-key';
 import { createPost, resetPostCreateForm } from '../redux/action-creators';
+import { deleteEmptyDraft, getDraft, newPostURI } from '../services/drafts';
 import { faGif } from './fontawesome-custom-icons';
 import { ButtonLink } from './button-link';
 import ErrorBoundary from './error-boundary';
@@ -21,7 +22,6 @@ import { Throbber } from './throbber';
 import { useFileChooser } from './uploader/file-chooser';
 import { useUploader } from './uploader/uploader';
 import { UploadProgress } from './uploader/progress';
-import { PreventPageLeaving } from './prevent-page-leaving';
 import PostAttachments from './post/post-attachments';
 import { useBool } from './hooks/bool';
 import { useServerValue } from './hooks/server-info';
@@ -34,7 +34,15 @@ import { OverlayPopup } from './overlay-popup';
 const selectMaxFilesCount = (serverInfo) => serverInfo.attachments.maxCountPerPost;
 const selectMaxPostLength = (serverInfo) => serverInfo.maxTextLength.post;
 
-export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
+export default function CreatePost({ sendTo, isDirects }) {
+  const draftKey = useSelector((state) => {
+    const loc = state.routing.locationBeforeTransitions;
+    return newPostURI(loc.pathname + loc.search);
+  });
+
+  // Cleaning up new post draft before the first render
+  useMemo(() => deleteEmptyDraft(draftKey), [draftKey]);
+
   const dispatch = useDispatch();
   const createPostStatus = useSelector((state) => state.createPostStatus);
 
@@ -46,8 +54,10 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
   // Local state
   const [commentsDisabled, toggleCommentsDisabled] = useBool(false);
   const [isMoreOpen, toggleIsMoreOpen] = useBool(false);
-  const [postText, setPostText] = useState(sendTo.invitation || '');
   const [gifActive, setgifActive] = useState(false);
+  const [postText, setPostText] = useState(
+    () => getDraft(draftKey)?.text ?? (sendTo.invitation || ''),
+  );
 
   const defaultFeedNames = useMemo(() => {
     if (Array.isArray(sendTo.defaultFeed)) {
@@ -58,10 +68,7 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
     return [];
   }, [sendTo.defaultFeed]);
 
-  const [feeds, setFeeds] = useState(defaultFeedNames);
-
-  // Update feed selector on new page
-  useEffect(() => setFeeds(defaultFeedNames), [defaultFeedNames]);
+  const [feeds, setFeeds] = useState(() => getDraft(draftKey)?.feeds ?? defaultFeedNames);
 
   const resetLocalState = useCallback(() => {
     toggleCommentsDisabled(false);
@@ -77,7 +84,7 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
     clearUploads,
     uploadProgressProps,
     postAttachmentsProps,
-  } = useUploader({ maxCount: maxFilesCount });
+  } = useUploader({ maxCount: maxFilesCount, draftKey });
 
   const doChooseFiles = useFileChooser(uploadFile, { multiple: true });
 
@@ -105,10 +112,10 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
   const doCreatePost = useCallback(
     (e) => {
       e?.preventDefault?.();
-      canSubmitForm && dispatch(createPost(feeds, postText, fileIds, { commentsDisabled }));
-      hideNewPostDialog && hideNewPostDialog(false);
+      canSubmitForm &&
+        dispatch(createPost(feeds, postText, fileIds, { commentsDisabled, draftKey }));
     },
-    [fileIds, canSubmitForm, commentsDisabled, dispatch, feeds, postText, hideNewPostDialog],
+    [canSubmitForm, dispatch, feeds, postText, fileIds, commentsDisabled, draftKey],
   );
 
   const handleCommentsDisable = useCallback(
@@ -183,19 +190,22 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
       ref={containerRef}
     >
       <ErrorBoundary>
-        <PreventPageLeaving prevent={isFormDirty} />
         <div>
           <Selector
             mode={isDirects ? CREATE_DIRECT : CREATE_REGULAR}
             feedNames={feeds}
+            defaultFeedNames={defaultFeedNames}
             onChange={setFeeds}
             onError={setHasFeedsError}
+            draftKey={draftKey}
           />
           <SmartTextarea
             ref={textareaRef}
             className="post-textarea"
             dragOverClassName="post-textarea__dragged"
+            inactiveClassName="textarea-inactive"
             value={postText}
+            defaultValue={sendTo.invitation || ''}
             onText={setPostText}
             onSubmit={doCreatePost}
             onFile={uploadFile}
@@ -203,6 +213,8 @@ export default function CreatePost({ sendTo, isDirects, hideNewPostDialog }) {
             maxRows={10}
             maxLength={maxPostLength}
             dir={'auto'}
+            draftKey={draftKey}
+            cancelEmptyDraftOnBlur
           />
         </div>
 

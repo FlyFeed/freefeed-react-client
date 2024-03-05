@@ -14,7 +14,6 @@ import {
   showMoreComments,
   showMoreLikes,
   addAttachmentResponse,
-  showMedia,
   likePost,
   unlikePost,
   hidePost,
@@ -213,7 +212,8 @@ export function postActions(dispatch) {
     deletePost: (postId, fromFeeds = []) => dispatch(deletePost(postId, fromFeeds)),
     toggleCommenting: (postId, newCommentText) =>
       dispatch(toggleCommenting(postId, newCommentText)),
-    addComment: (postId, commentText) => dispatch(addComment(postId, commentText)),
+    addComment: (postId, commentText, draftKey) =>
+      dispatch(addComment(postId, commentText, draftKey)),
     likePost: (postId, userId) => dispatch(likePost(postId, userId)),
     unlikePost: (postId, userId) => dispatch(unlikePost(postId, userId)),
     hidePost: (postId) => dispatch(hidePost(postId)),
@@ -223,11 +223,10 @@ export function postActions(dispatch) {
     enableComments: (postId) => dispatch(enableComments(postId)),
     addAttachmentResponse: (postId, attachments) =>
       dispatch(addAttachmentResponse(postId, attachments)),
-    showMedia: (params) => dispatch(showMedia(params)),
     commentEdit: {
       toggleEditingComment: (commentId) => dispatch(toggleEditingComment(commentId)),
-      saveEditingComment: (commentId, newValue) =>
-        dispatch(saveEditingComment(commentId, newValue)),
+      saveEditingComment: (commentId, newValue, draftKey) =>
+        dispatch(saveEditingComment(commentId, newValue, draftKey)),
       deleteComment: (commentId, postId) => dispatch(deleteComment(commentId, postId)),
       likeComment: (commentId) => dispatch(likeComment(commentId)),
       unlikeComment: (commentId) => dispatch(unlikeComment(commentId)),

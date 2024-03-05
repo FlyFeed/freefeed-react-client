@@ -21,6 +21,7 @@
 @import '../shared/search-feed';
 @import '../shared/groups';
 @import '../shared/notifications';
+@import '../shared/events-list';
 @import '../shared/arrow-span';
 @import '../shared/expandable';
 @import '../shared/comment-likes';
@@ -32,4 +33,3 @@
 @import 'react-select';
 @import 'legal';
 @import 'focus';
-@import '../../node_modules/react-photoswipe/lib/photoswipe.css';

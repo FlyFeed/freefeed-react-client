@@ -12,6 +12,7 @@ import { submittingByEnter } from '../services/appearance';
 import { makeJpegIfNeeded } from '../utils/jpeg-if-needed';
 import { insertText } from '../utils/insert-text';
 import { subscriptions, subscribers } from '../redux/action-creators';
+import { doneEditingIfEmpty, getDraft, setDraftField, subscribeToDrafts } from '../services/drafts';
 import { useForwardedRef } from './hooks/forward-ref';
 import { useEventListener } from './hooks/sub-unsub';
 import styles from './smart-textarea.module.scss';
@@ -31,7 +32,7 @@ const OPTION_LIST_Y_OFFSET = 20;
 const OPTION_LIST_MIN_WIDTH = 150;
 
 const propTypes = {
-  defaultValue: PropTypes.string,
+  //defaultValue: PropTypes.string,
   disabled: PropTypes.bool,
   maxOptions: PropTypes.number,
   onBlur: PropTypes.func,
@@ -53,7 +54,7 @@ const propTypes = {
 const defaultProps = {
   value: null,
   disabled: false,
-  defaultValue: '',
+  //defaultValue: '',
   onKeyDown: () => {},
   onRequestOptions: () => {},
   onSelect: () => {},
@@ -74,6 +75,7 @@ const getUniqueUsernames = (subscribers, subscriptions) => {
 
   return Array.from(new Set(subscribersUsername.concat(subscriptionsUsername))).sort();
 };
+
 export const SmartTextarea = forwardRef(function SmartTextarea(
   {
     // Triggers on submit by Enter of Ctrl/Cmd+Enter (no args)
@@ -88,6 +90,12 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
     component: Component = TextareaAutosize,
     className,
     dragOverClassName,
+    // Class name before the first focus
+    inactiveClassName,
+    draftKey,
+    // Value to reset to when draft disappears
+    defaultValue = '',
+    cancelEmptyDraftOnBlur = false,
     ...props
   },
   fwdRef,
@@ -95,6 +103,7 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
   const ref = useForwardedRef(fwdRef, {});
   useSubmit(onSubmit, ref);
   const draggingOver = useFile(onFile, ref);
+  const [wasFocused, setWasFocused] = useState(Boolean(props.autoFocus));
 
   const [helperVisible, setHelperVisible] = useState(false);
   const [left, setLeft] = useState(0);
@@ -129,6 +138,49 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    const input = ref.current;
+    const onFocus = () => setWasFocused(true);
+    const onBlur = () => cancelEmptyDraftOnBlur && draftKey && doneEditingIfEmpty(draftKey);
+    input.addEventListener('focus', onFocus);
+    input.addEventListener('blur', onBlur);
+    return () => {
+      input.removeEventListener('focus', onFocus);
+      input.removeEventListener('blur', onBlur);
+    };
+  }, [cancelEmptyDraftOnBlur, draftKey, ref]);
+
+  ref.current.insertText = useCallback(
+    (insertion) => {
+      const input = ref.current;
+      const [text, selStart, selEnd] = insertText(
+        insertion,
+        input.value,
+        input.selectionStart,
+        input.selectionEnd,
+      );
+      // Pre-fill the input value to keep the cursor/selection
+      // position after React update cycle
+      input.value = text;
+      input.setSelectionRange(selStart, selEnd);
+      input.focus();
+      onText?.(input.value);
+      if (draftKey) {
+        setDraftField(draftKey, 'text', input.value);
+      }
+    },
+    [draftKey, onText, ref],
+  );
+
+  useEffect(() => {
+    if (!draftKey && !onText) {
+      return;
+    }
+    return subscribeToDrafts(() => {
+      onText(getDraft(draftKey)?.text ?? defaultValue);
+    });
+  }, [defaultValue, draftKey, onText]);
 
   const isTrigger = useCallback(
     (trigger, str, i) => !trigger || str.slice(i, i + trigger.length) === trigger,
@@ -183,6 +235,7 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
     setHelperVisible(false);
     setSelection(0);
   }, [setHelperVisible, setSelection]);
+
   const updateCaretPosition = useCallback(
     (caret) => {
       setCaretPosition(ref.current, caret);
@@ -245,12 +298,17 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
       setOptions,
     ],
   );
+
   const handleChange = useCallback(
     (e) => {
       const { spaceRemovers, spacer, enableSpaceRemovers } = props;
       const old = recentValue.current;
       const str = e.target.value;
       const caret = getInputSelection(e.target).end;
+
+      if (draftKey) {
+        setDraftField(draftKey, 'text', e.target.value);
+      }
 
       if (str.length === 0) {
         setHelperVisible(false);
@@ -300,6 +358,7 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
       return false;
     },
     [
+      draftKey,
       props,
       recentValue,
       setHelperVisible,
@@ -451,7 +510,7 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
     );
   };
 
-  const { defaultValue, value, disabled, ...rest } = props;
+  const { value, disabled, ...rest } = props;
   const propagated = Object.assign({}, rest);
   Object.keys(propTypes).forEach((k) => {
     delete propagated[k];
@@ -486,20 +545,16 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
     [onText, ref],
   );
 
-  /*const handleChange = useCallback(
-    (e) => {
-      onChange?.(e);
-      onText?.(e.target.value);
-    },
-    [onChange, onText],
-  );*/
-
   return (
     <>
       <div>
         <Component
           ref={ref}
-          className={cn(className, draggingOver && dragOverClassName)}
+          className={cn(
+            className,
+            draggingOver && dragOverClassName,
+            !wasFocused && inactiveClassName,
+          )}
           disabled={disabled}
           /* eslint-disable-next-line react/jsx-no-bind */
           onBlur={onBlur}
@@ -513,6 +568,8 @@ export const SmartTextarea = forwardRef(function SmartTextarea(
       </div>
     </>
   );
+
+  //{...props}
 });
 
 SmartTextarea.propTypes = propTypes;

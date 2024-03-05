@@ -463,4 +463,8 @@ body,
     box-shadow: 0 4px 6px rgba(248, 248, 248, 0.2);
     outline-color: $bg-color;
   }
+
+  blockquote {
+    border-left-color: $bg-color-lightest;
+  }
 }

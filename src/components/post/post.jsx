@@ -34,6 +34,7 @@ import { UserPicture } from '../user-picture';
 import { prepareAsyncFocus } from '../../utils/prepare-async-focus';
 import { format } from '../../utils/date-format';
 import { TranslatedText } from '../translated-text';
+import { existingPostURI } from '../../services/drafts';
 import { UnhideOptions, HideLink } from './post-hides-ui';
 import PostMoreLink from './post-more-link';
 import PostLikeLink from './post-like-link';
@@ -44,6 +45,7 @@ import PostLikes from './post-likes';
 import { PostContext } from './post-context';
 import { PostEditForm } from './post-edit-form';
 import { PostProvider } from './post-comment-provider';
+import { DraftIndicator } from './draft-indicator';
 
 class Post extends Component {
   selectFeeds;
@@ -338,6 +340,14 @@ class Post extends Component {
                   {this.renderHideLink()}
                 </span>
               )}
+              <span className="post-footer-item">
+                {!props.isEditing && (
+                  <DraftIndicator
+                    draftKey={existingPostURI(this.props.shortId)}
+                    onClick={this.toggleEditingPost}
+                  />
+                )}
+              </span>
               <span className="post-footer-item">{moreLink}</span>
             </span>
           </div>
@@ -420,9 +430,8 @@ class Post extends Component {
                         text={props.body}
                         readMoreStyle={props.readMoreStyle}
                         highlightTerms={props.highlightTerms}
-                        showMedia={this.props.showMedia}
                       />
-                      <TranslatedText type="post" id={props.id} showMedia={this.props.showMedia} />
+                      <TranslatedText type="post" id={props.id} />
                     </div>
                   </>
                 )}
@@ -437,7 +446,6 @@ class Post extends Component {
                       attachmentIds={this.props.attachments}
                       isEditing={false}
                       isSinglePost={props.isSinglePost}
-                      showMedia={this.props.showMedia}
                       removeAttachment={this.removeAttachment}
                       reorderImageAttachments={this.reorderImageAttachments}
                     />
@@ -492,7 +500,6 @@ class Post extends Component {
                 addComment={props.addComment}
                 toggleCommenting={props.toggleCommenting}
                 showMoreComments={props.showMoreComments}
-                showMedia={props.showMedia}
                 commentEdit={props.commentEdit}
                 readMoreStyle={props.readMoreStyle}
                 entryUrl={canonicalPostURI}

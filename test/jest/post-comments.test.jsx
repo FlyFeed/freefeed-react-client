@@ -1,7 +1,6 @@
 /* global describe, it, expect, vi */
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import '@testing-library/jest-dom/extend-expect';
 import { createStore } from 'redux';
 import * as reactRedux from 'react-redux';
 
@@ -63,6 +62,7 @@ const COMMENT3 = {
 
 const POST = {
   id: 'post-id',
+  shortId: 'post-id',
   omittedComments: 0,
   omittedCommentsOffset: 0,
   omittedCommentLikes: 0,
@@ -83,6 +83,7 @@ const defaultState = {
   serverInfoStatus: initialAsyncState,
   translationStates: {},
   translationResults: {},
+  posts: { [POST.id]: POST },
 };
 
 const renderPostComments = (props = {}, options = {}) => {

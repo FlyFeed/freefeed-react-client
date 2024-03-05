@@ -676,10 +676,17 @@ export function attachments(state = {}, action) {
       return state;
     }
     case response(ActionTypes.CREATE_ATTACHMENT):
+    case ActionTypes.SET_ATTACHMENT:
     case ActionTypes.ADD_ATTACHMENT_RESPONSE: {
+      const attObj = action.payload.attachments;
+      // Attachment objects don't change over time, so we don't need to update
+      // them.
+      if (state[attObj.id]) {
+        return state;
+      }
       return {
         ...state,
-        [action.payload.attachments.id]: action.payload.attachments,
+        [attObj.id]: attObj,
       };
     }
   }
@@ -1798,13 +1805,6 @@ export function realtimeSubscriptions(state = [], action) {
       const newState = _.difference(state, rooms);
       return newState.length !== state.length ? newState : state;
     }
-  }
-  return state;
-}
-
-export function mediaViewer(state = [], action) {
-  if (action.type === ActionTypes.SHOW_MEDIA) {
-    return action.payload;
   }
   return state;
 }

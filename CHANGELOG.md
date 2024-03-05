@@ -5,7 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.127.0] - Not released
+## [1.129.0] - Not released
+
+## [1.128.0] - 2024-03-01
+### Fixed
+- Fix lightbox for some old attachments that have no sizes in API responses.
+### Added
+- Drafts. When a user creates/edits a post or comment, the entered text is
+  automatically saved to localStorage. This prevents accidental loss of content
+  in case of a bad connection or browser closure. For posts, saved drafts also
+  contain attachments and feed name information.
+
+  Draft data automatically synchronized between the browser tabs, but not
+  between the other user's devices.
+
+  Drafts are deleted when a post/comment form has been successfully submitted or
+  explicitly canceled by the user. When the user signs out, all draft data is
+  deleted. Draft data also deletes when the signed in user changes.
+
+  User can disable drafts saving on the Settings / Privacy page. In this case,
+  drafts will still work, but will not be saved to persistent storage and will
+  be lost on tab close/reload.
+
+## [1.127.3] - 2024-02-14
+### Fixed
+- Incorrect use of 'useEffect' causing a crash on the 'Manage Group Subscribers'
+  page.
+
+## [1.127.2] - 2024-02-04
+### Fixed
+- Return the 'maximum-scale=1' back to the "viewport" meta tag, but remove it on
+  non-iOS platforms. This allows to zoom in page on all platforms, but prevents
+  the unwanted auto-zoom on iOS.
+
+## [1.127.1] - 2024-02-02
+### Changed
+- Upgrade React to v18
+- Users can now scale the site with a pinch gesture on mobile devices.
+- The lightbox code now detects image sizes faster when showing images from text
+  links. User doesn't see a small 100x100 preview anymore.
+
+## [1.127.0] - 2024-01-19
+### Changed
+- Use the latest (v5) version of PhotoSwipe library.
 
 ## [1.126.0] - 2023-12-21
 ### Added
