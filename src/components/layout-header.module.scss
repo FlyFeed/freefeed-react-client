@@ -36,11 +36,31 @@ $without-sidebar: '(max-width: 991px)';
   }
 }
 
+.nowruz {
+  margin-bottom: 10px;
+  margin-top: -25px;
+  background: linear-gradient(to right, #d43e1b 0, #f9b616 100pt);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  font-size: 12pt;
+  width: 250px;
+  text-transform: capitalize;
+
+  @media #{$with-sidebar} {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  @media #{$without-sidebar} {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
+
 .logo {
   flex: 1;
   margin: 0;
   white-space: nowrap;
-  font-size: 36px; // fluid's fallback size
   font-size: fluid(28, 320, 36, 600);
 }
 
