@@ -4,8 +4,8 @@ const SvgComponent = (props) => (
     version="1.2"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 754 253"
-    width="179"
-    height="60"
+    width="157"
+    height="50"
     {...props}
   >
     <defs>
