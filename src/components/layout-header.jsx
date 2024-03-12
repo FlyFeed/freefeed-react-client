@@ -17,7 +17,7 @@ import styles from './layout-header.module.scss';
 import { SignInLink } from './sign-in-link';
 import Logo from './freefeed-logo';
 
-export const { confettiDone } = CONFIG.frontendPreferences;
+export const { confettiNowruz } = CONFIG.frontendPreferences;
 
 export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
   const dispatch = useDispatch();
@@ -27,6 +27,7 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
   const isNarrowScreen = useMediaQuery('(max-width: 549px)');
 
   const authenticated = useSelector((state) => state.authenticated);
+  const userId = useSelector((state) => state.user.id);
   const screenName = useSelector((state) => state.user.screenName);
 
   const [searchExpanded, setSearchExpanded] = useState(false);
@@ -92,8 +93,8 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
   const { width, height } = useWindowSize();
   const appRoot = document.querySelector('#confetti');
   const confetti = () => {
-    const isConfetti = localStorage.getItem(confettiDone);
-    if (isConfetti !== '1' && screenName) {
+    const isConfetti = localStorage.getItem(confettiNowruz);
+    if (userId && isConfetti !== userId) {
       createRoot(appRoot).render(
         <Confetti
           width={width}
@@ -104,7 +105,7 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
           friction={0.99}
         />,
       );
-      localStorage.setItem(confettiDone, '1');
+      localStorage.setItem(confettiNowruz, userId);
     }
   };
 

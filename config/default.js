@@ -62,6 +62,7 @@ export default {
 
   frontendPreferences: {
     clientId: 'org.eu.freefeed',
+    confettiNowruz: 'confettiNowruz',
     // Use only plain JSON types here. Do not use null values (for type checking).
     defaultValues: {
       displayNames: {
