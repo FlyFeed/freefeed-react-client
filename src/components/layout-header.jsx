@@ -78,7 +78,6 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
     onFocus,
     onBlur: closeSearchForm,
   });
-  // eslint-disable-next-line no-undef
   const NowruzCM = () => <span>Happy new year {screenName ? `dear ${screenName}` : null}</span>;
   const NowruzCD = ({ completed, formatted }) => {
     if (completed) {
