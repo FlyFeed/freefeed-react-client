@@ -5,6 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import cn from 'classnames';
 import { KEY_ESCAPE } from 'keycode-js';
 import { useDispatch, useSelector } from 'react-redux';
+import useWindowSize from 'react-use/lib/useWindowSize';
+import Confetti from 'react-confetti';
+import { createRoot } from 'react-dom/client';
 
 import Countdown from 'react-countdown';
 import { openSidebar } from '../redux/action-creators';
@@ -13,6 +16,8 @@ import { useMediaQuery } from './hooks/media-query';
 import styles from './layout-header.module.scss';
 import { SignInLink } from './sign-in-link';
 import Logo from './freefeed-logo';
+
+export const { confettiDone } = CONFIG.frontendPreferences;
 
 export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
   const dispatch = useDispatch();
@@ -83,6 +88,24 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
         {formatted.days} d : {formatted.hours} h : {formatted.minutes} m : {formatted.seconds} s
       </span>
     );
+  };
+  const { width, height } = useWindowSize();
+  const appRoot = document.querySelector('#confetti');
+  const confetti = () => {
+    const isConfetti = localStorage.getItem(confettiDone);
+    if (isConfetti !== '1' && screenName) {
+      createRoot(appRoot).render(
+        <Confetti
+          width={width}
+          height={height}
+          numberOfPieces={700}
+          gravity={0.05}
+          recycle={false}
+          friction={0.99}
+        />,
+      );
+      localStorage.setItem(confettiDone, '1');
+    }
   };
 
   const searchForm = (
@@ -194,7 +217,8 @@ export const LayoutHeader = withRouter(function LayoutHeader({ router }) {
       </header>
       <div className={cn(styles.nowruz)}>
         {/* eslint-disable-next-line react/jsx-no-bind */}
-        <Countdown date={1710903985000} renderer={NowruzCD} />
+        <Countdown date={1710903985000} renderer={NowruzCD} onComplete={confetti} />
+        <div id={'confetti'} />
       </div>
     </>
   );
