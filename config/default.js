@@ -77,6 +77,7 @@ export default {
         hideRepliesToBanned: false,
       },
       allowLinksPreview: false,
+      allowLinksPreviewUsingOG: true,
       readMoreStyle: 'modern',
       homeFeedSort: ACTIVITY,
       homeFeedMode: HOMEFEED_MODE_CLASSIC,

@@ -467,7 +467,11 @@ class Post extends Component {
                       </div>
                     ) : (
                       <div className="link-preview" role="region" aria-label="Link preview">
-                        <LinkPreview url={linkToEmbed} allowEmbedly={props.allowLinksPreview} />
+                        <LinkPreview
+                          url={linkToEmbed}
+                          allowEmbedly={props.allowLinksPreview}
+                          allowOpenGraph={props.allowLinksPreviewUsingOG}
+                        />
                       </div>
                     )}
                   </div>

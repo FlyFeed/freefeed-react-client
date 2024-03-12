@@ -12,10 +12,9 @@ import SoundCloudPreview, { canShowURL as soundCloudCanShowURL } from './soundcl
 import SpotifyPreview, { canShowURL as spotifyCanShowURL } from './spotify';
 import AppleMusicPreview, { canShowUrl as appleMusicCanShowURL } from './apple-music';
 import OpenGraphPreview from './open-graph';
-
 import EmbedlyPreview from './embedly';
 
-export default function LinkPreview({ allowEmbedly, url }) {
+export default function LinkPreview({ allowOpenGraph, allowEmbedly, url }) {
   if (noPreviewForURL(url)) {
     return false;
   }
@@ -41,7 +40,7 @@ export default function LinkPreview({ allowEmbedly, url }) {
     return <SpotifyPreview url={url} />;
   } else if (appleMusicCanShowURL(url)) {
     return <AppleMusicPreview url={url} />;
-  } else if (OpenGraphPreview({ url })) {
+  } else if (allowOpenGraph && OpenGraphPreview({ url })) {
     return <OpenGraphPreview url={url} />;
   }
   if (allowEmbedly) {
@@ -51,6 +50,7 @@ export default function LinkPreview({ allowEmbedly, url }) {
 }
 
 LinkPreview.propTypes = {
+  allowOpenGraph: PropTypes.bool.isRequired,
   allowEmbedly: PropTypes.bool.isRequired,
   url: PropTypes.string.isRequired,
 };

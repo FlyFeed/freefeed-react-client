@@ -178,7 +178,8 @@ export const joinPostData = (state) => (postId) => {
   });
   const isDirect = directRecipients.length > 0;
 
-  const { allowLinksPreview, readMoreStyle } = state.user.frontendPreferences;
+  const { allowLinksPreviewUsingOG, allowLinksPreview, readMoreStyle } =
+    state.user.frontendPreferences;
 
   return {
     ...post,
@@ -193,6 +194,7 @@ export const joinPostData = (state) => (postId) => {
     isModeratable,
     isDeletable,
     canBeRemovedFrom,
+    allowLinksPreviewUsingOG,
     allowLinksPreview,
     readMoreStyle,
     recipientNames,

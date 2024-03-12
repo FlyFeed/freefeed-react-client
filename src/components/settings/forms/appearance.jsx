@@ -101,6 +101,7 @@ export default function AppearanceForm() {
   const highlightComments = useField('highlightComments', form.form);
   const hideBannedComments = useField('hideBannedComments', form.form);
   const hideRepliesToBanned = useField('hideRepliesToBanned', form.form);
+  const allowLinksPreviewUsingOG = useField('allowLinksPreviewUsingOG', form.form);
   const allowLinksPreview = useField('allowLinksPreview', form.form);
   const hideNSFWContent = useField('hideNSFWContent', form.form);
   const commentsTimestamps = useField('commentsTimestamps', form.form);
@@ -403,6 +404,12 @@ export default function AppearanceForm() {
         <div className="form-group">
           <div className="checkbox">
             <label>
+              <CheckboxInput field={allowLinksPreviewUsingOG} />
+              Show advanced previews of links in posts (using Open Graph)
+            </label>
+          </div>
+          <div className="checkbox">
+            <label>
               <CheckboxInput field={allowLinksPreview} />
               Show advanced previews of links in posts (using Embedly)
               <p className="help-block">
@@ -541,6 +548,7 @@ function initialValues({
     highlightComments: frontend.comments.highlightComments,
     hideBannedComments: backend?.hideCommentsOfTypes.includes(COMMENT_HIDDEN_BANNED),
     hideRepliesToBanned: frontend.comments.hideRepliesToBanned,
+    allowLinksPreviewUsingOG: frontend.allowLinksPreviewUsingOG,
     allowLinksPreview: frontend.allowLinksPreview,
     hideNSFWContent: !isNSFWVisible,
     commentsTimestamps: frontend.comments.showTimestamps,
@@ -602,6 +610,7 @@ function prefUpdaters(values) {
           hideRepliesToBanned: values.hideRepliesToBanned,
         },
         allowLinksPreview: values.allowLinksPreview,
+        allowLinksPreviewUsingOG: values.allowLinksPreviewUsingOG,
         timeDisplay: {
           ...prefs.timeDisplay,
           amPm: values.timeAmPm === '1',
