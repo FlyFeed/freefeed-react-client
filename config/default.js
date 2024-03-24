@@ -11,7 +11,7 @@ export default {
 
   siteTitle: 'FlyFeed',
 
-  siteOrigin: 'https://freefeed.net',
+  siteOrigin: 'https://freefeed.eu.org',
 
   auth: {
     tokenPrefix: 'freefeed_',
