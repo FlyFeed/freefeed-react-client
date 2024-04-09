@@ -4,6 +4,7 @@ import cn from 'classnames';
 import GifPicker from 'gif-picker-react';
 
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
 import { initialAsyncState } from '../redux/async-helpers';
 import { tenorApiKey } from '../utils/tenor-api-key';
 import { doneEditingAndDeleteDraft, getDraft } from '../services/drafts';
@@ -18,6 +19,7 @@ import { useFileChooser } from './uploader/file-chooser';
 import { UploadProgress } from './uploader/progress';
 import { faGif } from './fontawesome-custom-icons';
 import { OverlayPopup } from './overlay-popup';
+import { PreventPageLeaving } from './prevent-page-leaving';
 
 export function CommentEditForm({
   initialText = '',
@@ -30,6 +32,7 @@ export function CommentEditForm({
   submitStatus = initialAsyncState,
   draftKey,
 }) {
+  const frontendPreferences = useSelector((state) => state.user.frontendPreferences);
   const { setInput } = useContext(PostContext);
   const input = useRef(null);
   const [gifActive, setgifActive] = useState(false);
@@ -43,13 +46,16 @@ export function CommentEditForm({
 
   const doCancel = useCallback(
     (e) => {
-      if (text !== initialText && !confirm('Discard changes?')) {
+      if (text.trim() !== initialText.trim() && !confirm('Discard changes?')) {
         return;
+      }
+      if (isPersistent) {
+        setText(initialText);
       }
       onCancel(e);
       doneEditingAndDeleteDraft(draftKey);
     },
-    [draftKey, initialText, onCancel, text],
+    [draftKey, initialText, isPersistent, onCancel, text],
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,6 +113,9 @@ export function CommentEditForm({
 
   return (
     <div className="comment-body" role="form">
+      <PreventPageLeaving
+        prevent={!frontendPreferences.saveDrafts && (canSubmit || submitStatus.loading)}
+      />
       <div>
         <SmartTextarea
           ref={input}
@@ -146,16 +155,14 @@ export function CommentEditForm({
           Comment
         </button>
 
-        {!isPersistent && (
-          <ButtonLink
-            className="comment-cancel"
-            onClick={doCancel}
-            aria-disabled={submitStatus.loading}
-            aria-label={submitStatus.loading ? 'Cancel disabled (submitting)' : null}
-          >
-            Cancel
-          </ButtonLink>
-        )}
+        <ButtonLink
+          className="comment-cancel"
+          onClick={doCancel}
+          aria-disabled={submitStatus.loading}
+          aria-label={submitStatus.loading ? 'Cancel disabled (submitting)' : null}
+        >
+          {isPersistent ? 'Clear' : 'Cancel'}
+        </ButtonLink>
 
         <SubmitModeHint input={input} />
 

@@ -7,10 +7,11 @@ import {
 import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cn from 'classnames';
+import { xor } from 'lodash-es';
+import { createPost, resetPostCreateForm } from '../redux/action-creators';
+import { deleteDraft, deleteEmptyDraft, getDraft, newPostURI } from '../services/drafts';
 import GifPicker from 'gif-picker-react';
 import { tenorApiKey } from '../utils/tenor-api-key';
-import { createPost, resetPostCreateForm } from '../redux/action-creators';
-import { deleteEmptyDraft, getDraft, newPostURI } from '../services/drafts';
 import { faGif } from './fontawesome-custom-icons';
 import { ButtonLink } from './button-link';
 import ErrorBoundary from './error-boundary';
@@ -30,6 +31,7 @@ import { CREATE_DIRECT, CREATE_REGULAR } from './feeds-selector/constants';
 import { CommaAndSeparated } from './separated';
 import { usePrivacyCheck } from './feeds-selector/privacy-check';
 import { OverlayPopup } from './overlay-popup';
+import { PreventPageLeaving } from './prevent-page-leaving';
 
 const selectMaxFilesCount = (serverInfo) => serverInfo.attachments.maxCountPerPost;
 const selectMaxPostLength = (serverInfo) => serverInfo.maxTextLength.post;
@@ -39,6 +41,7 @@ export default function CreatePost({ sendTo, isDirects }) {
     const loc = state.routing.locationBeforeTransitions;
     return newPostURI(loc.pathname + loc.search);
   });
+  const frontendPreferences = useSelector((state) => state.user.frontendPreferences);
 
   // Cleaning up new post draft before the first render
   useMemo(() => deleteEmptyDraft(draftKey), [draftKey]);
@@ -103,6 +106,25 @@ export default function CreatePost({ sendTo, isDirects }) {
     [fileIds.length, isUploading, postText],
   );
 
+  const resetForm = useCallback(() => {
+    clearUploads();
+    resetLocalState();
+    setFeeds(defaultFeedNames);
+    dispatch(resetPostCreateForm());
+  }, [clearUploads, defaultFeedNames, dispatch, resetLocalState]);
+
+  const canClearForm = useMemo(
+    () => isFormDirty || !isArrayEquals(defaultFeedNames, feeds),
+    [defaultFeedNames, feeds, isFormDirty],
+  );
+
+  const clearForm = useCallback(() => {
+    if (canClearForm && confirm('Discard changes?')) {
+      resetForm();
+      deleteDraft(draftKey);
+    }
+  }, [canClearForm, draftKey, resetForm]);
+
   const [hasFeedsError, setHasFeedsError] = useState(false);
 
   const canSubmitForm = useMemo(() => {
@@ -127,12 +149,9 @@ export default function CreatePost({ sendTo, isDirects }) {
     // Reset form on success
     if (createPostStatus.success) {
       textareaRef.current?.blur();
-      clearUploads();
-      resetLocalState();
-      setFeeds(defaultFeedNames);
-      dispatch(resetPostCreateForm());
+      resetForm();
     }
-  }, [clearUploads, createPostStatus.success, defaultFeedNames, dispatch, resetLocalState]);
+  }, [createPostStatus.success, resetForm]);
 
   // Reset async status on unmount
   useEffect(() => () => dispatch(resetPostCreateForm()), [dispatch]);
@@ -190,6 +209,7 @@ export default function CreatePost({ sendTo, isDirects }) {
       ref={containerRef}
     >
       <ErrorBoundary>
+        <PreventPageLeaving prevent={!frontendPreferences.saveDrafts && isFormDirty} />
         <div>
           <Selector
             mode={isDirects ? CREATE_DIRECT : CREATE_REGULAR}
@@ -235,6 +255,14 @@ export default function CreatePost({ sendTo, isDirects }) {
               <span className="post-submit-icon">{privacyIcon}</span>
               Post
             </button>
+            <ButtonLink
+              className="post-cancel"
+              disabled={!canClearForm || createPostStatus.loading}
+              aria-label={createPostStatus.loading ? 'Clear disabled (submitting)' : null}
+              onClick={clearForm}
+            >
+              Clear
+            </ButtonLink>
           </div>
 
           <div className="post-edit-options">
@@ -329,4 +357,8 @@ export default function CreatePost({ sendTo, isDirects }) {
       </ErrorBoundary>
     </div>
   );
+}
+
+function isArrayEquals(a, b) {
+  return xor(a, b).length === 0;
 }
