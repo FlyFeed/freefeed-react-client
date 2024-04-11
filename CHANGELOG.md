@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.130.0] - Not released
 
+## [1.129.2] - 2024-04-10
+### Fixed
+- Fix the comment form's "Cancel" button behavior in the feed.
+
+## [1.129.1] - 2024-04-10
+### Fixed
+- Don't show the "Clear" button on empty forms.
+
 ## [1.129.0] - 2024-04-09
 ### Added
 - Drafts now can be completely disabled by user.
