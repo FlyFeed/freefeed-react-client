@@ -1,11 +1,13 @@
 /* global CONFIG */
 import { useMemo, useCallback, useState, useRef, useEffect, useContext } from 'react';
 import cn from 'classnames';
+import GifPicker from 'gif-picker-react';
 
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { initialAsyncState } from '../redux/async-helpers';
 import { doneEditingAndDeleteDraft, getDraft } from '../services/drafts';
+import { tenorApiKey } from '../utils/tenor-api-key';
 import { Throbber } from './throbber';
 import { ButtonLink } from './button-link';
 import { Icon } from './fontawesome-icons';
@@ -17,6 +19,8 @@ import { useFileChooser } from './uploader/file-chooser';
 import { UploadProgress } from './uploader/progress';
 import { PreventPageLeaving } from './prevent-page-leaving';
 import { Autocomplete } from './autocomplete/autocomplete';
+import { faGif } from './fontawesome-custom-icons';
+import { OverlayPopup } from './overlay-popup';
 
 export function CommentEditForm({
   initialText = '',
@@ -33,6 +37,7 @@ export function CommentEditForm({
   const { setInput } = useContext(PostContext);
   const input = useRef(null);
   const [text, setText] = useState(() => getDraft(draftKey)?.text ?? initialText);
+  const [gifActive, setgifActive] = useState(false);
   const canSubmit = useMemo(
     () => !submitStatus.loading && text.trim() !== '',
     [submitStatus.loading, text],
@@ -103,6 +108,12 @@ export function CommentEditForm({
 
   const disabled = !canSubmit || submitStatus.loading || isUploading;
 
+  function setGif(gif) {
+    input.current?.focus();
+    setText(`${text} ${gif}`);
+    setgifActive(false);
+  }
+
   return (
     <div className="comment-body" role="form">
       <PreventPageLeaving
@@ -168,6 +179,38 @@ export function CommentEditForm({
         >
           <Icon icon={faPaperclip} />
         </ButtonLink>
+
+        <ButtonLink
+          className="comment-file-button iconic-button"
+          title="Add Gif"
+          /* eslint-disable-next-line react/jsx-no-bind */
+          onClick={() => {
+            setgifActive(!gifActive);
+            input.current?.focus();
+          }}
+        >
+          <Icon icon={faGif} />
+        </ButtonLink>
+        {gifActive && (
+          <>
+            <OverlayPopup
+              /* eslint-disable-next-line react/jsx-no-bind */
+              close={() => {
+                setgifActive(false);
+                input.current?.focus();
+              }}
+            >
+              <GifPicker
+                /* eslint-disable-next-line react/jsx-no-bind */
+                onGifClick={(gif) => setGif(gif.url)}
+                theme={
+                  localStorage.getItem(window.CONFIG.appearance.colorSchemeStorageKey) || 'auto'
+                }
+                tenorApiKey={tenorApiKey}
+              />
+            </OverlayPopup>
+          </>
+        )}
 
         {submitStatus.loading && <Throbber className="comment-throbber" />}
         {submitStatus.error && <span className="comment-error">{submitStatus.errorText}</span>}

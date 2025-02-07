@@ -19,6 +19,7 @@
     "final-form": "~4.20.10",
     "focus-trap-react": "~10.3.0",
     "focus-visible": "~5.2.1",
+    "gif-picker-react": "^1.4.0",
     "iso-639-1": "~3.1.3",
     "keycode-js": "~3.1.0",
     "local-storage-fallback": "~5.0.0",

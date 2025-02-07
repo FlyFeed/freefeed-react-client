@@ -8,8 +8,12 @@ import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cn from 'classnames';
 import { xor } from 'lodash-es';
+import GifPicker from 'gif-picker-react';
+import { tenorApiKey } from '../utils/tenor-api-key';
 import { createPost, resetPostCreateForm } from '../redux/action-creators';
 import { deleteDraft, deleteEmptyDraft, getDraft, newPostURI } from '../services/drafts';
+import { faGif } from './fontawesome-custom-icons';
+import { OverlayPopup } from './overlay-popup';
 import { ButtonLink } from './button-link';
 import ErrorBoundary from './error-boundary';
 import { Icon } from './fontawesome-icons';
@@ -57,6 +61,7 @@ export default function CreatePost({ sendTo, isDirects }) {
   const [postText, setPostText] = useState(
     () => getDraft(draftKey)?.text ?? (sendTo.invitation || ''),
   );
+  const [gifActive, setgifActive] = useState(false);
 
   const defaultFeedNames = useMemo(() => {
     if (Array.isArray(sendTo.defaultFeed)) {
@@ -163,6 +168,12 @@ export default function CreatePost({ sendTo, isDirects }) {
 
   const [privacyLevel, privacyProblems] = usePrivacyCheck(feeds);
 
+  const setGif = (gif) => {
+    textareaRef.current?.focus();
+    setPostText(`${postText} ${gif}`);
+    setgifActive(false);
+  };
+
   const privacyIcon = useMemo(
     () =>
       privacyLevel === 'private' ? (
@@ -266,6 +277,38 @@ export default function CreatePost({ sendTo, isDirects }) {
             >
               <Icon icon={faPaperclip} className="upload-icon" /> Add photos or files
             </ButtonLink>
+
+            {' | '}
+            <ButtonLink
+              className="post-edit-attachments"
+              role="button"
+              /* eslint-disable-next-line react/jsx-no-bind */
+              onClick={() => {
+                setgifActive(!gifActive);
+              }}
+            >
+              <Icon icon={faGif} className="upload-icon" />
+            </ButtonLink>
+            {gifActive && (
+              <>
+                <OverlayPopup
+                  /* eslint-disable-next-line react/jsx-no-bind */
+                  close={() => {
+                    setgifActive(false);
+                    textareaRef.current?.focus();
+                  }}
+                >
+                  <GifPicker
+                    /* eslint-disable-next-line react/jsx-no-bind */
+                    onGifClick={(gif) => setGif(gif.url)}
+                    theme={
+                      localStorage.getItem(window.CONFIG.appearance.colorSchemeStorageKey) || 'auto'
+                    }
+                    tenorApiKey={tenorApiKey}
+                  />
+                </OverlayPopup>
+              </>
+            )}
 
             <ButtonLink className="post-edit-more-trigger" onClick={toggleIsMoreOpen}>
               <MoreWithTriangle />
