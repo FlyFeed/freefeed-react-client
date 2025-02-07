@@ -35,9 +35,6 @@ export const SideBarMemories = withRouter(function SideBarMemories({ router }) {
 
   return (
     <div className="box" role="navigation">
-      <div className="box-header-memories" role="heading">
-        Memories
-      </div>
       <div className="box-body">
         <p>
           {username ? <>@{username}&#x2019;s</> : 'All'} records for {format(today, 'MMMM\u00A0d')}
