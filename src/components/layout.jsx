@@ -1,9 +1,9 @@
 /* global CONFIG */
-import { Component, Suspense } from 'react';
+import { Component, Suspense, createRef } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import classnames from 'classnames';
-import { faBug } from '@fortawesome/free-solid-svg-icons';
+import { faBug, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router';
 
 import { signOut, home, setCurrentRoute } from '../redux/action-creators';
@@ -14,6 +14,7 @@ import LoaderContainer from './loader-container';
 import ErrorBoundary from './error-boundary';
 import { ColorSchemeSetter } from './color-theme-setter';
 import { Icon, SVGSymbolDeclarations } from './fontawesome-icons';
+import { faMessage, faHouse } from './fontawesome-custom-icons';
 import { Throbber } from './throbber';
 import { Delayed } from './lazy-component';
 import { AppUpdated } from './app-updated';
@@ -61,6 +62,9 @@ class Layout extends Component {
 
     this.dragFirstLevel = false;
     this.dragSecondLevel = false;
+
+    this.prevScrollpos = 0;
+    this.mobileNavbarRef = createRef();
   }
 
   containsFiles(e) {
@@ -122,6 +126,19 @@ class Layout extends Component {
     }
   }
 
+  handleScroll = () => {
+    if (this.props.authenticated) {
+      const currentScrollPos = window.scrollY;
+      const mobileNavbar = this.mobileNavbarRef.current;
+      if (this.prevScrollpos > currentScrollPos) {
+        mobileNavbar.style.transform = 'translateY(0)';
+      } else {
+        mobileNavbar.style.transform = 'translateY(100%)';
+      }
+      this.prevScrollpos = currentScrollPos;
+    }
+  };
+
   _prevRoute = null;
   updateCurrentRoute() {
     const { router } = this.props;
@@ -142,6 +159,7 @@ class Layout extends Component {
     window.addEventListener('dragleave', this.handleDragLeave);
     window.addEventListener('dragover', this.handleDragOver);
     window.addEventListener('drop', this.handleDrop);
+    window.addEventListener('scroll', this.handleScroll);
 
     this.updateCurrentRoute();
   }
@@ -155,6 +173,7 @@ class Layout extends Component {
     window.removeEventListener('dragleave', this.handleDragLeave);
     window.removeEventListener('dragover', this.handleDragOver);
     window.removeEventListener('drop', this.handleDrop);
+    window.removeEventListener('scroll', this.handleScroll);
   }
 
   render() {
@@ -177,23 +196,39 @@ class Layout extends Component {
 
           {props.authenticated && (
             <div className="row">
-              <div className="mobile-shortcuts hidden-md hidden-lg" role="navigation">
-                <Link className="mobile-shortcut-link" to="/filter/discussions">
-                  Discussions
-                </Link>
-                <Link className="mobile-shortcut-link" to="/filter/notifications">
-                  Notifications
-                  {props.user.unreadNotificationsNumber > 0 &&
-                    !props.user.frontendPreferences.hideUnreadNotifications &&
-                    ` (${props.user.unreadNotificationsNumber})`}
-                </Link>
-                <Link className="mobile-shortcut-link" to="/filter/direct">
-                  Directs
-                  {props.user.unreadDirectsNumber > 0 && ` (${props.user.unreadDirectsNumber})`}
-                </Link>
-                <Link className="mobile-shortcut-link" to={`/${props.user.username}`}>
-                  My feed
-                </Link>
+              <div
+                className="mobile-navbar hidden-md hidden-lg"
+                role="navigation"
+                ref={this.mobileNavbarRef}
+              >
+                <div className="mobile-navbar-row">
+                  <Link to={`/`}>
+                    <Icon icon={faHouse} />
+                  </Link>
+                </div>
+                <div className="mobile-navbar-row">
+                  <Link to="/filter/notifications">
+                    <Icon icon={faBell} />
+                    <sup>
+                      {props.user.unreadNotificationsNumber > 0 &&
+                        !props.user.frontendPreferences.hideUnreadNotifications &&
+                        ` (${props.user.unreadNotificationsNumber})`}
+                    </sup>
+                  </Link>
+                </div>
+                <div className="mobile-navbar-row">
+                  <Link to="/filter/direct">
+                    <Icon icon={faMessage} />
+                    <sup>
+                      {props.user.unreadDirectsNumber > 0 && ` (${props.user.unreadDirectsNumber})`}
+                    </sup>
+                  </Link>
+                </div>
+                <div className="mobile-navbar-row">
+                  <Link to={`/${props.user.username}`}>
+                    <Icon icon={faUser} />
+                  </Link>
+                </div>
               </div>
             </div>
           )}

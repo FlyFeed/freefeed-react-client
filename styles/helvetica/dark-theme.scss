@@ -432,4 +432,20 @@ body,
   blockquote {
     border-left-color: $bg-color-lightest;
   }
+
+  .mobile-navbar {
+    background-color: #202020;
+
+    a:link {
+      color: $link-color;
+    }
+
+    a:visited {
+      color: $link-color;
+    }
+
+    a:hover {
+      color: $link-color;
+    }
+  }
 }
