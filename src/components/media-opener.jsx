@@ -1,7 +1,19 @@
 import { useCallback, useMemo } from 'react';
 import { faImage } from '@fortawesome/free-regular-svg-icons';
 import { faFilm as faVideo } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faYoutube, faVimeo } from '@fortawesome/free-brands-svg-icons';
+import {
+  faInstagram,
+  faYoutube,
+  faVimeo,
+  faTwitter,
+  faSoundcloud,
+  faSpotify,
+  faApple,
+  faTiktok,
+  faWikipediaW,
+  faTelegramPlane,
+  faGoogle,
+} from '@fortawesome/free-brands-svg-icons';
 import cn from 'classnames';
 import { renderToString } from 'react-dom/server';
 import { openLightbox } from '../services/lightbox';
@@ -10,6 +22,14 @@ import {
   canShowURL as isInstagram,
   getEmbedInfo as getInstagramEmbedInfo,
 } from './link-preview/instagram';
+import { canShowURL as isTwitter } from './link-preview/twitter';
+import { canShowURL as isSoundCloud } from './link-preview/soundcloud';
+import { canShowURL as isSpotify } from './link-preview/spotify';
+import { canShowUrl as isAppleMusic } from './link-preview/apple-music';
+import { canShowURL as isTiktok } from './link-preview/tiktok';
+import { canShowURL as isWikipedia } from './link-preview/wikipedia';
+import { canShowURL as isTelegram } from './link-preview/telegram';
+import { canShowURL as isGoogleDocs } from './link-preview/google-docs';
 import { T_YOUTUBE_VIDEO, getVideoInfo, getVideoType } from './link-preview/video';
 
 export const getMediaType = (url) => {
@@ -18,6 +38,22 @@ export const getMediaType = (url) => {
       return 'image';
     } else if (isInstagram(url)) {
       return 'instagram';
+    } else if (isTwitter(url)) {
+      return 'twitter';
+    } else if (isSoundCloud(url)) {
+      return 'soundcloud';
+    } else if (isSpotify(url)) {
+      return 'spotify';
+    } else if (isAppleMusic(url)) {
+      return 'appleMusic';
+    } else if (isTiktok(url)) {
+      return 'tiktok';
+    } else if (isWikipedia(url)) {
+      return 'wikipedia';
+    } else if (isTelegram(url)) {
+      return 'telegram';
+    } else if (isGoogleDocs(url)) {
+      return 'googleDocs';
     }
     return getVideoType(url);
   } catch {
@@ -71,6 +107,14 @@ export function MediaOpener({ url, mediaType, attachmentsRef, children }) {
   const mediaIcon =
     {
       instagram: faInstagram,
+      twitter: faTwitter,
+      soundcloud: faSoundcloud,
+      spotify: faSpotify,
+      appleMusic: faApple,
+      tiktok: faTiktok,
+      telegram: faTelegramPlane,
+      wikipedia: faWikipediaW,
+      googleDocs: faGoogle,
       T_YOUTUBE_VIDEO: faYoutube,
       T_VIMEO_VIDEO: faVimeo,
       image: faImage,
