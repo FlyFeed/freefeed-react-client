@@ -1,7 +1,7 @@
 /* global CONFIG */
 import { useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter } from 'react-router';
+import { withRouter, Link } from 'react-router';
 import { Portal } from 'react-portal';
 import {
   faGlobeAmericas,
@@ -12,7 +12,13 @@ import {
   faCheckSquare,
   faUserSlash,
 } from '@fortawesome/free-solid-svg-icons';
-import { faSmile, faCheckCircle as faCheckCircleO } from '@fortawesome/free-regular-svg-icons';
+import {
+  faSmile,
+  faCheckCircle as faCheckCircleO,
+  faFileImage,
+  faFileAudio,
+  faFileAlt,
+} from '@fortawesome/free-regular-svg-icons';
 
 import { initialAsyncState } from '../redux/async-helpers';
 import {
@@ -286,6 +292,22 @@ export const UserProfileHead = withRouter(
               inSubscribers={inSubscribers}
               isCurrentUserAdmin={isCurrentUserAdmin}
             />
+          </div>
+          <div>
+            <Icon icon={faFileImage} />{' '}
+            <Link to={`/search?q=in:${username} has:images`} className={styles.statlinkText}>
+              Images
+            </Link>
+            {' | '}
+            <Icon icon={faFileAudio} />{' '}
+            <Link to={`/search?q=in:${username} has:audio`} className={styles.statlinkText}>
+              Audios
+            </Link>
+            {' | '}
+            <Icon icon={faFileAlt} />{' '}
+            <Link to={`/search?q=in:${username} has:files`} className={styles.statlinkText}>
+              All Files
+            </Link>
           </div>
         </div>
         <div className={styles.description}>
